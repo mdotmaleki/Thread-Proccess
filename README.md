@@ -1,6 +1,6 @@
 # توضیحات برنامه Thread-Proccess
 پروژه‌ای آموزشی برای نمایش تفاوت بین **Thread** و **Process** در پایتون، با استفاده از **FastAPI** و **HTMX**.  
-این پروژه به‌صورت کامل **Dockerized** شده و روی هر سیستمی قابل اجراست.
+این پروژه به‌صورت کامل **Dockerized** شده است.
 
 ---
 
@@ -9,9 +9,8 @@
 - اجرای همزمان وظایف با **Threading**
 - اجرای موازی وظایف با **Multiprocessing**
 - رابط کاربری ساده و سبک با **HTMX**
-- API سریع و مدرن با **FastAPI**
-- آماده برای اجرا داخل **Docker**
-- ساختار تمیز و قابل توسعه
+- پروژه **Dockerized**
+
 
 ---
 
@@ -31,22 +30,22 @@ Thread-Proccess/
  ## اجرای پروژه با Docker
  ---
 1) ساخت ایمیج
-docker build -t thread-proccess .
+- docker build -t thread-proccess .
 
 2) اجرای کانتینر
-docker run -d -p 8000:8000 thread-proccess
+- docker run -d -p 8000:8000 thread-proccess
 
 3) مشاهده پروژه
-مرورگر را باز کنید:
-http://localhost:8000
+- مرورگر را باز کنید
+- http://localhost:8000
 
 ---
  ## نحوه ارسال تغییرات به GitHub
-هر بار که تغییری ایجاد شد:
-git status
-git add .
-git commit -m "شرح تغییرات"
-git push
+- هر بار که تغییری ایجاد شد:
+- git status
+- git add .
+- git commit -m "شرح تغییرات"
+- git push
 
 ## تکنولوژی‌های استفاده‌شده
 - Python 3.10
@@ -57,6 +56,7 @@ git push
 - Threading / Multiprocessing
 
 ## توسعه‌دهنده
-میثم ملکی
+- میثم ملکی
+- شماره دانشجویی: 40411415015
 
 
