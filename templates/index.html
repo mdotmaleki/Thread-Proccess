@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>پردازش موازی - میثم ملکی</title>
+
+  
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f2f2f2;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            flex-direction: column;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 500px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .result {
+            background: #222;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, button {
+            width: 100%;
+            margin-top: 5px;
+            padding: 8px;
+        }
+        button {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h3 style="text-align:center;">پروژه نهایی درس پردازش موازی</h3>
+    <h4 style="text-align:center;">میثم ملکی</h4>
+    <h5 style="text-align:center;">شماره دانشجویی: 40411415015</h5>
+
+    <label>روش:</label>
+    <select id="method" name="method"
+            hx-get="/get-tools"
+            hx-target="#tools"
+            hx-trigger="change">
+        <option value="">انتخاب کنید...</option>
+        <option value="thread">Thread</option>
+        <option value="process">Process</option>
+    </select>
+
+    <br><br>
+
+    <div id="tools">
+        
+    </div>
+
+    <br>
+
+    <label>شماره سناریو:</label>
+    <select id="scenario" name="scenario">
+        <option value="1">سناریو ۱</option>
+        <option value="2">سناریو ۲</option>
+        <option value="3">سناریو ۳</option>
+    </select>
+
+    <button
+    hx-post="/run"
+    hx-target="#result"
+    hx-include="#method,#tool,#scenario"
+    hx-on:click="
+        document.getElementById('result').innerHTML =
+        '<div class=\'result\'>در حال اجرا...</div>';
+    "
+    >
+    اجرا
+    </button>
+
+
+</div>
+
+<div id="result" class="box" style="margin-top:20px;"></div>
+
+</body>
+</html>
