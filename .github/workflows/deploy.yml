@@ -18,13 +18,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+
     - name: Test SSH Port
       run: |
-        - name: Test SSH port
-  
-          timeout 10 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/22" && echo "Port 22 open" || echo "Port 22 closed"
-          ping -c 4 ${{ secrets.SERVER_HOST }}
-          nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
+        echo "Testing SSH connection..."
+        
+        timeout 10 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/22" \
+        && echo "Port 22 open" \
+        || echo "Port 22 closed"
+
+        echo "Testing ping..."
+        ping -c 4 ${{ secrets.SERVER_HOST }} || true
+
+        echo "Testing nc..."
+        nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
+
 
     - name: Deploy to Server
       uses: appleboy/ssh-action@v1.0.3
@@ -36,6 +44,10 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
 
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+        port: 22
+
+        debug: true
 
         script: |
 
