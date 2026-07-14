@@ -20,7 +20,8 @@ jobs:
 
     - name: Test SSH Port
       run: |
-        nc -vz ${{ secrets.SERVER_HOST }} 22
+        ping -c 4 ${{ secrets.SERVER_HOST }}
+        nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
 
     - name: Deploy to Server
       uses: appleboy/ssh-action@v1.0.3
