@@ -8,9 +8,10 @@ on:
 
 jobs:
 
-  build:
+  deploy:
 
     runs-on: ubuntu-latest
+
 
     steps:
 
@@ -18,5 +19,31 @@ jobs:
       uses: actions/checkout@v4
 
 
-    - name: Build Docker Image
-      run: docker build -t thread-process .
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@v1.0.3
+
+      with:
+
+        host: ${{ secrets.SERVER_HOST }}
+
+        username: ${{ secrets.SERVER_USER }}
+
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+        script: |
+
+          cd ~/Thread-Proccess
+
+          git pull
+
+          docker build -t thread-process .
+
+          docker stop thread-api || true
+
+          docker rm thread-api || true
+
+          docker run -d \
+          --name thread-api \
+          -p 8000:8000 \
+          -v thread-data:/app/data \
+          thread-process
