@@ -2,99 +2,194 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>پردازش موازی - میثم ملکی</title>
+    <title>پروژه پردازش موازی</title>
 
-  
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
-            font-family: sans-serif;
             background: #f2f2f2;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             margin: 0;
-            flex-direction: column;
-        }
-        .box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 500px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .result {
-            background: #222;
-            color: #0f0;
             padding: 10px;
-            border-radius: 6px;
+        }
+        pre {
             white-space: pre-wrap;
             font-family: monospace;
         }
-        label {
-            font-weight: bold;
+        #output-box {
+            height: 48%;
+            overflow-y: auto;
         }
-        select, button {
-            width: 100%;
-            margin-top: 5px;
-            padding: 8px;
-        }
-        button {
-            margin-top: 15px;
+        #description-box {
+            height: 48%;
+            overflow-y: auto;
         }
     </style>
 </head>
 
 <body>
 
-<div class="box">
-    <h3 style="text-align:center;">پروژه نهایی درس پردازش موازی</h3>
-    <h4 style="text-align:center;">میثم ملکی</h4>
-    <h5 style="text-align:center;">شماره دانشجویی: 40411415015</h5>
+<div class="container-fluid h-100">
+    <div class="row h-100">
 
-    <label>روش:</label>
-    <select id="method" name="method"
-            hx-get="/get-tools"
-            hx-target="#tools"
-            hx-trigger="change">
-        <option value="">انتخاب کنید...</option>
-        <option value="thread">Thread</option>
-        <option value="process">Process</option>
-    </select>
+        <!-- ستون راست -->
+        <div class="col-4">
 
-    <br><br>
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
 
-    <div id="tools">
-        
+                    <h4 class="text-center mb-3">پروژه نهایی پردازش موازی</h4>
+                    <h5 class="text-center mb-1">میثم ملکی</h5>
+                    <h6 class="text-center mb-4">شماره دانشجویی: 40411415015</h6>
+
+                    <!-- روش -->
+                    <div class="mb-3">
+                        <label class="form-label">روش:</label>
+                        <select id="method" class="form-select">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="thread">Thread</option>
+                            <option value="process">Process</option>
+                        </select>
+                    </div>
+
+                    <!-- ابزار -->
+                    <div class="mb-3">
+                        <label class="form-label">ابزار همزمانی:</label>
+                        <div id="tools">
+                            <select id="tool" class="form-select" disabled>
+                                <option value="">ابتدا روش را انتخاب کنید</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- سناریو -->
+                    <div class="mb-3">
+                        <label class="form-label">سناریو:</label>
+                        <select id="scenario" class="form-select">
+                            <option value="">ابتدا ابزار را انتخاب کنید</option>
+                        </select>
+                    </div>
+
+                    <button id="run-btn" class="btn btn-primary w-100">اجرا</button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ستون چپ -->
+        <div class="col-8 d-flex flex-column">
+
+            <div id="output-box" class="card mb-2 shadow-sm">
+                <div class="card-header">خروجی</div>
+                <div class="card-body">
+                    <div id="output-content">
+                        <pre></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div id="description-box" class="card shadow-sm">
+                <div class="card-header">توضیحات</div>
+                <div class="card-body">
+                    <p></p>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-
-    <br>
-
-    <label>شماره سناریو:</label>
-    <select id="scenario" name="scenario">
-        <option value="1">سناریو ۱</option>
-        <option value="2">سناریو ۲</option>
-        <option value="3">سناریو ۳</option>
-    </select>
-
-    <button
-    hx-post="/run"
-    hx-target="#result"
-    hx-include="#method,#tool,#scenario"
-    hx-on:click="
-        document.getElementById('result').innerHTML =
-        '<div class=\'result\'>در حال اجرا...</div>';
-    "
-    >
-    اجرا
-    </button>
-
-
 </div>
 
-<div id="result" class="box" style="margin-top:20px;"></div>
+<script>
+    const methodSelect = document.getElementById("method");
+    const toolsContainer = document.getElementById("tools");
+    const scenarioSelect = document.getElementById("scenario");
+    const runBtn = document.getElementById("run-btn");
+    const outputContent = document.getElementById("output-content");
+
+    // وقتی روش تغییر می‌کند → ابزارها را از سرور بگیر
+    methodSelect.addEventListener("change", function () {
+        const method = this.value;
+
+        scenarioSelect.innerHTML = `<option value="">ابتدا ابزار را انتخاب کنید</option>`;
+
+        if (!method) {
+            toolsContainer.innerHTML = `
+                <select id="tool" class="form-select" disabled>
+                    <option value="">ابتدا روش را انتخاب کنید</option>
+                </select>
+            `;
+            return;
+        }
+
+        fetch(`/get-tools?method=${method}`)
+            .then(res => res.json())
+            .then(data => {
+                const tools = data.tools;
+
+                let html = `<select id="tool" class="form-select">`;
+                tools.forEach(t => html += `<option value="${t}">${t}</option>`);
+                html += `</select>`;
+
+                toolsContainer.innerHTML = html;
+
+                // وقتی ابزار تغییر کرد → سناریوها را بگیر
+                document.getElementById("tool").addEventListener("change", function () {
+                    const tool = this.value;
+
+                    fetch(`/get-scenarios?method=${method}&tool=${tool}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            scenarioSelect.innerHTML = "";
+                            data.scenarios.forEach(s => {
+                                scenarioSelect.innerHTML += `<option value="${s.id}">${s.title}</option>`;
+                            });
+                        });
+                });
+            });
+    });
+
+    // اجرای سناریو
+    runBtn.addEventListener("click", function () {
+        const method = document.getElementById("method").value;
+        const tool = document.getElementById("tool")?.value;
+        const scenario = document.getElementById("scenario").value;
+
+        if (!method || !tool) {
+            outputContent.innerHTML = `<pre>لطفاً روش و ابزار را انتخاب کنید.</pre>`;
+            return;
+        }
+
+        outputContent.innerHTML = `<pre>در حال اجرا...</pre>`;
+        document.querySelector("#description-box .card-body").innerHTML = "<p></p>";
+
+        fetch("/run", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                method: method,
+                tool: tool,
+                scenario: scenario
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.status === "error") {
+                outputContent.innerHTML = `<pre>${data.message}</pre>`;
+            } else {
+                let text = "";
+                data.logs.forEach(line => text += line + "\n");
+                outputContent.innerHTML = `<pre>${text}</pre>`;
+            }
+
+            document.querySelector("#description-box .card-body").innerHTML =
+                `<p>${data.description}</p>`;
+        });
+    });
+</script>
 
 </body>
 </html>
