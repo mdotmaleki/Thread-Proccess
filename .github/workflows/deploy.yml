@@ -18,6 +18,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Test SSH Port
+      run: |
+      nc -vz ${{ secrets.SERVER_HOST }} 22
 
     - name: Deploy to Server
       uses: appleboy/ssh-action@v1.0.3
