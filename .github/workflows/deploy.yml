@@ -20,8 +20,11 @@ jobs:
 
     - name: Test SSH Port
       run: |
-        ping -c 4 ${{ secrets.SERVER_HOST }}
-        nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
+        - name: Test SSH port
+  
+          timeout 10 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/22" && echo "Port 22 open" || echo "Port 22 closed"
+          ping -c 4 ${{ secrets.SERVER_HOST }}
+          nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
 
     - name: Deploy to Server
       uses: appleboy/ssh-action@v1.0.3
