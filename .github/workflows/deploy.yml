@@ -36,7 +36,7 @@ jobs:
         || echo "Port 22 closed"
 
         echo "Testing ping..."
-        ping -c 4 ${{ secrets.SERVER_HOST }} || true
+        ping -c 4 ${{ secrets.SERVER_HOST }} 9000 || true
 
         echo "Testing nc..."
         nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
