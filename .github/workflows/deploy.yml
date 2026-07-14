@@ -18,9 +18,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Show IP
+    - name: Test host format
       run: |
-        echo ${{ secrets.SERVER_HOST }}
+        if [[ "${{ secrets.SERVER_HOST }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "SERVER_HOST looks like an IP"
+        else
+          echo "SERVER_HOST format is wrong"
+          exit 1
+        fi
 
     - name: Test SSH Port
       run: |
