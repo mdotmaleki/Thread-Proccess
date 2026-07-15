@@ -32,8 +32,8 @@ jobs:
         
         
         timeout 10 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/2222" \
-        && echo "Port 2222 open" \
-        || echo "Port 22222 closed"
+        && echo "Port 22 open" \
+        || echo "Port 22 closed"
 
         echo "Testing ping..."
         ping -c 4 ${{ secrets.SERVER_HOST }} || true
