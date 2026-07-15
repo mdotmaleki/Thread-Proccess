@@ -53,7 +53,7 @@ jobs:
 
         key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-        port: 2222
+        port: 22
 
         debug: true
 
