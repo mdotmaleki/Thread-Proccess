@@ -6,6 +6,10 @@ on:
       - main
 
 
+env:
+  ENABLE_DEPLOY: false
+
+
 jobs:
 
   deploy:
@@ -18,7 +22,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+
+    - name: CI/CD Disabled
+      if: env.ENABLE_DEPLOY == 'false'
+      run: |
+        echo "CI/CD is temporarily disabled."
+        echo "Deployment will be done manually."
+
+
     - name: Test host format
+      if: env.ENABLE_DEPLOY == 'true'
       run: |
         if [[ "${{ secrets.SERVER_HOST }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
           echo "SERVER_HOST looks like an IP"
@@ -27,10 +40,10 @@ jobs:
           exit 1
         fi
 
+
     - name: Test SSH Port
+      if: env.ENABLE_DEPLOY == 'true'
       run: |
-        
-        
         timeout 10 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/2222" \
         && echo "Port 22 open" \
         || echo "Port 22 closed"
@@ -39,10 +52,11 @@ jobs:
         ping -c 4 ${{ secrets.SERVER_HOST }} || true
 
         echo "Testing nc..."
-        nc -vz -w 5 ${{ secrets.SERVER_HOST }} 2222
+        nc -vz -w 5 ${{ secrets.SERVER_HOST }} 22
 
 
     - name: Deploy to Server
+      if: env.ENABLE_DEPLOY == 'true'
       uses: appleboy/ssh-action@v1.0.3
 
       with:
