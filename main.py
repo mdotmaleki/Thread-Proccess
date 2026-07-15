@@ -113,7 +113,7 @@ def get_scenarios(method: str, tool: str):
                 {"id": "subclass_3", "title": "شبیه سازی ربات های کارخانه"},
             ],
             "lock": [
-                {"id": "lock_1", "title": "کنترل همزمانی: مثال کتاب"},
+                {"id": "lock_1", "title": "کنترل همزمانی"},
                 {"id": "lock_2", "title": "نویسندگان وب"},
                 {"id": "lock_3", "title": "رزرو صندلی سینما"},
             ],
