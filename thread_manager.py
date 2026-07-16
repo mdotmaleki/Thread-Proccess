@@ -8,9 +8,11 @@ import random
 from multiprocessing import Process, Manager
 import multiprocessing
 from process_manager import ProcessManager
-from threading import Barrier, Thread
+from threading import Barrier
 from time import ctime, sleep
-from random import randrange
+from queue import Queue
+
+
 
 class MyThreadClass(Thread):
         def __init__(self, name, duration, logs):
@@ -1040,13 +1042,11 @@ class ThreadManager:
         items = []
         condition = threading.Condition()
 
-        # تابع کمکی برای ساخت لاگ
+        
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # -------------------------------
-        # Consumer
-        # -------------------------------
+        
         def consume(thread_name):
             with condition:
                 if len(items) == 0:
@@ -1063,9 +1063,7 @@ class ThreadManager:
                 time.sleep(2)
                 consume(name)
 
-        # -------------------------------
-        # Producer
-        # -------------------------------
+       
         def produce(thread_name):
             with condition:
                 if len(items) == 10:
@@ -1082,9 +1080,7 @@ class ThreadManager:
                 time.sleep(0.5)
                 produce(name)
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         start = time.time()
 
         t1 = threading.Thread(target=producer_thread)
@@ -1109,17 +1105,15 @@ class ThreadManager:
     def thread_condition_2(self):
         logs = []
 
-        queue = []                 # صف کارهای چاپ
+        queue = []
         condition = threading.Condition()
-        MAX_QUEUE = 5              # ظرفیت صف چاپ
+        MAX_QUEUE = 5
 
-        # تابع کمکی برای ساخت لاگ
+        
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # -------------------------------
-        # Printer (Consumer)
-        # -------------------------------
+        
         def printer_thread():
             name = "Printer"
 
@@ -1133,15 +1127,13 @@ class ThreadManager:
                     make_log(name, f"printing job {job}")
                     condition.notify()
 
-                time.sleep(1.5)  # زمان چاپ
+                time.sleep(1.5)
 
-        # -------------------------------
-        # Employee (Producer)
-        # -------------------------------
+        
         def employee_thread(i):
             name = f"Employee-{i}"
 
-            for j in range(3):  # هر کارمند 3 کار چاپ می‌فرستد
+            for j in range(3):
                 time.sleep(random.uniform(0.5, 2))
 
                 with condition:
@@ -1154,16 +1146,14 @@ class ThreadManager:
                     make_log(name, f"submitted print job {job_id}")
                     condition.notify()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         start = time.time()
 
-        # نخ چاپگر (daemon)
+        
         t_printer = threading.Thread(target=printer_thread, daemon=True)
         t_printer.start()
 
-        # چند کارمند
+        
         threads = []
         for i in range(5):
             t = threading.Thread(target=employee_thread, args=(i+1,))
@@ -1185,17 +1175,15 @@ class ThreadManager:
     def thread_condition_3(self):
         logs = []
 
-        orders = []                 # صف سفارش‌ها
+        orders = []
         condition = threading.Condition()
-        MAX_ORDERS = 5              # ظرفیت صف سفارش
+        MAX_ORDERS = 5
 
-        # تابع کمکی برای ساخت لاگ
+        
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # -------------------------------
-        # Chef (Consumer)
-        # -------------------------------
+       
         def chef_thread():
             name = "Chef"
 
@@ -1209,15 +1197,13 @@ class ThreadManager:
                     make_log(name, f"cooking order {order}")
                     condition.notify()
 
-                time.sleep(1.5)  # زمان پخت غذا
+                time.sleep(1.5)
 
-        # -------------------------------
-        # Waiter (Producer)
-        # -------------------------------
+        
         def waiter_thread(i):
             name = f"Waiter-{i}"
 
-            for j in range(3):  # هر گارسون 3 سفارش می‌گیرد
+            for j in range(3):
                 time.sleep(random.uniform(0.5, 2))
 
                 with condition:
@@ -1230,16 +1216,14 @@ class ThreadManager:
                     make_log(name, f"submitted order {order_id}")
                     condition.notify()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         start = time.time()
 
-        # نخ آشپز (daemon)
+        
         t_chef = threading.Thread(target=chef_thread, daemon=True)
         t_chef.start()
 
-        # چند گارسون
+        
         threads = []
         for i in range(4):
             t = threading.Thread(target=waiter_thread, args=(i+1,))
@@ -1262,23 +1246,21 @@ class ThreadManager:
     def thread_event_1(self):
         logs = []
 
-        items = []                 # بافر مشترک
-        event = threading.Event()  # رویداد برای هماهنگی نخ‌ها
+        items = []
+        event = threading.Event()
 
-        # تابع کمکی برای ساخت لاگ
+        
         def make_log(thread_name, message):
             #timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             logs.append(f"{thread_name:} ---> {message}")
 
-        # -------------------------------
-        # Consumer (مصرف‌کننده)
-        # -------------------------------
+        
         def consumer_thread():
             name = "Consumer"
 
             while True:
                 time.sleep(2)
-                event.wait()   # منتظر سیگنال Producer
+                event.wait()
 
                 if len(items) > 0:
                     item = items.pop()
@@ -1286,11 +1268,9 @@ class ThreadManager:
                 else:
                     make_log(name, "no item to consume")
 
-                event.clear()  # سیگنال مصرف شد، پاک می‌کنیم
+                event.clear()
 
-        # -------------------------------
-        # Producer (تولیدکننده)
-        # -------------------------------
+        
         def producer_thread():
             name = "Producer"
 
@@ -1300,11 +1280,9 @@ class ThreadManager:
                 items.append(item)
                 make_log(name, f"produced item {item}")
 
-                event.set()  # سیگنال بده به Consumer
+                event.set()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         start = time.time()
 
         t1 = threading.Thread(name="Producer", target=producer_thread)
@@ -1320,11 +1298,8 @@ class ThreadManager:
         logs.append(f"{total:.2f} seconds")
 
         return logs
-    # -------------------------
-
-    # -------------------------
-    # Thread + event + Scenario 2
-    # -------------------------
+       
+    
     def thread_event_2(self):
         logs = []
 
@@ -1333,9 +1308,7 @@ class ThreadManager:
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # -------------------------------
-        # عملیات‌های بعد از دانلود
-        # -------------------------------
+        
         def reader():
             name = "Reader"
             make_log(name, "waiting for file...")
@@ -1368,9 +1341,7 @@ class ThreadManager:
             time.sleep(random.uniform(0.5, 1.5))
             make_log(name, "finished analyzing")
 
-        # -------------------------------
-        # Downloader Thread
-        # -------------------------------
+        
         def downloader():
             name = "Downloader"
 
@@ -1378,12 +1349,12 @@ class ThreadManager:
             time.sleep(random.uniform(1, 3))
             make_log(name, "download completed")
 
-            # سیگنال بده تا عملیات‌های بعدی شروع شوند
+            
             event.set()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
+        
+        
         start = time.time()
 
         threading.Thread(target=downloader, name="Downloader").start()
@@ -1392,7 +1363,7 @@ class ThreadManager:
         threading.Thread(target=backup, name="Backup", daemon=True).start()
         threading.Thread(target=analyzer, name="Analyzer", daemon=True).start()
 
-        # صبر کن تا همه عملیات‌ها انجام شوند
+        
         time.sleep(5)
 
         total = time.time() - start
@@ -1405,18 +1376,18 @@ class ThreadManager:
     def thread_event_3(self):
         logs = []
 
-        green_event = threading.Event()   # چراغ سبز
-        red_event = threading.Event()     # چراغ قرمز
+        green_event = threading.Event()
+        red_event = threading.Event()
 
-        car_count = 5                     # تعداد ماشین‌ها
-        cycles = 3                        # تعداد چرخه‌ها
+        car_count = 5
+        cycles = 3
 
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # -------------------------------
-        # رفتار ماشین‌ها
-        # -------------------------------
+        
+        
+        
         def car(car_id):
             name = f"Car-{car_id}"
 
@@ -1424,19 +1395,17 @@ class ThreadManager:
 
             for cycle in range(1, cycles + 1):
 
-                green_event.wait()   # منتظر چراغ سبز
+                green_event.wait()
 
                 make_log(name, f"moving (cycle {cycle})")
                 time.sleep(random.uniform(0.5, 1.5))
 
-                red_event.wait()     # منتظر چراغ قرمز
+                red_event.wait()
                 make_log(name, f"stopped at red light (cycle {cycle})")
 
             make_log(name, "finished all cycles")
 
-        # -------------------------------
-        # چراغ راهنمایی
-        # -------------------------------
+        
         def traffic_light():
             name = "TrafficLight"
 
@@ -1445,26 +1414,25 @@ class ThreadManager:
                 red_event.clear()
                 green_event.set()
 
-                time.sleep(5)  # مدت زمان چراغ سبز
+                time.sleep(5)
 
                 make_log(name, f"RED light ON (cycle {cycle})")
                 green_event.clear()
                 red_event.set()
 
-                time.sleep(3)  # مدت زمان چراغ قرمز
+                time.sleep(3)
 
             make_log(name, "all cycles completed")
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+               
+        
         start = time.time()
 
-        # ساخت ماشین‌ها
+        
         for i in range(1, car_count + 1):
             threading.Thread(target=car, args=(i,), name=f"Car-{i}", daemon=True).start()
 
-        # چراغ راهنمایی
+        
         t_light = threading.Thread(target=traffic_light, name="TrafficLight")
         t_light.start()
 
@@ -1475,7 +1443,7 @@ class ThreadManager:
         logs.append(f"{total:.2f} seconds")
 
         return logs
-    # -------------------------
+    
 
     # -------------------------
     # Thread + barrier + Scenario 1
@@ -1484,11 +1452,6 @@ class ThreadManager:
 
     def thread_barrier_1(self):
         logs = []
-
-        from random import randrange
-        from threading import Barrier, Thread
-        from time import ctime, sleep
-
         num_runners = 3
         finish_line = Barrier(num_runners)
         runners = ['Huey', 'Dewey', 'Louie']
@@ -1520,10 +1483,6 @@ class ThreadManager:
     def thread_barrier_2(self):
         logs = []
 
-        from threading import Barrier, Thread
-        from time import sleep, ctime
-        import random
-
         file_count = 3
         barrier_download = Barrier(file_count)
         barrier_process = Barrier(file_count)
@@ -1533,28 +1492,24 @@ class ThreadManager:
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # -------------------------------
-        # رفتار هر فایل
-        # -------------------------------
+        
         def worker(file_name):
 
-            # مرحله ۱: دانلود
+
             sleep(random.uniform(1, 3))
             make_log(file_name, f"downloaded at {ctime()}")
             barrier_download.wait()
 
-            # مرحله ۲: پردازش
+
             sleep(random.uniform(1, 3))
             make_log(file_name, f"processed at {ctime()}")
             barrier_process.wait()
 
-            # مرحله ۳: ذخیره
+
             sleep(random.uniform(1, 3))
             make_log(file_name, f"saved at {ctime()}")
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         threads = []
         for f in files:
             t = Thread(target=worker, args=(f,), name=f)
@@ -1574,13 +1529,9 @@ class ThreadManager:
     def thread_barrier_3(self):
         logs = []
 
-        from threading import Barrier, Thread
-        from time import sleep, ctime
-        import random
-
         product_count = 3
 
-        # سه مرحله، هرکدام یک Barrier
+        
         barrier_build = Barrier(product_count)
         barrier_paint = Barrier(product_count)
 
@@ -1589,28 +1540,24 @@ class ThreadManager:
         def make_log(name, msg):
             logs.append(f"{name} --> {msg}")
 
-        # -------------------------------
-        # رفتار هر محصول
-        # -------------------------------
+
         def worker(product):
 
-            # مرحله ۱: ساخت
+            
             sleep(random.uniform(1, 3))
             make_log(product, f"built at {ctime()}")
             barrier_build.wait()
 
-            # مرحله ۲: رنگ
+            
             sleep(random.uniform(1, 3))
             make_log(product, f"painted at {ctime()}")
             barrier_paint.wait()
 
-            # مرحله ۳: بسته‌بندی
+           
             sleep(random.uniform(1, 3))
             make_log(product, f"packaged at {ctime()}")
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         threads = []
         for p in products:
             t = Thread(target=worker, args=(p,), name=p)
@@ -1630,16 +1577,11 @@ class ThreadManager:
     def thread_queue_1(self):
         logs = []
 
-        from threading import Thread
-        from queue import Queue
-        import time
-        import random
+        
 
         queue = Queue()
 
-        # -------------------------------
-        # Producer
-        # -------------------------------
+        
         def producer():
             for i in range(5):
                 item = random.randint(0, 256)
@@ -1647,18 +1589,14 @@ class ThreadManager:
                 logs.append(f"Producer notify: item Nº{item} appended to queue by Producer")
                 time.sleep(1)
 
-        # -------------------------------
-        # Consumer
-        # -------------------------------
+        
         def consumer(name):
             while True:
                 item = queue.get()
                 logs.append(f"Consumer notify: {item} popped from queue by {name}")
                 queue.task_done()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         t1 = Thread(target=producer, name="Producer")
         t2 = Thread(target=consumer, args=("Consumer-1",), name="Consumer-1")
         t3 = Thread(target=consumer, args=("Consumer-2",), name="Consumer-2")
@@ -1671,7 +1609,6 @@ class ThreadManager:
 
         t1.join()
 
-        # صبر می‌کنیم تا همهٔ آیتم‌ها پردازش شوند
         queue.join()
 
         logs.append("Queue processing finished.")
@@ -1690,37 +1627,31 @@ class ThreadManager:
         import time
         import random
 
-        # صف سفارش‌های آماده
+        
         order_queue = Queue()
 
-        # -------------------------------
-        # Producer: آشپزخانه
-        # -------------------------------
+        
         def kitchen():
-            for i in range(10):  # ده سفارش آماده می‌شود
+            for i in range(10):
                 order_id = random.randint(1000, 9999)
                 order_queue.put(order_id)
                 logs.append(f"Kitchen --> Order {order_id} is ready and added to queue")
                 time.sleep(random.uniform(0.5, 1.5))
 
-        # -------------------------------
-        # Consumer: پیک‌ها
-        # -------------------------------
+        
         def delivery_boy(name):
             while True:
                 order_id = order_queue.get()
                 logs.append(f"{name} --> picked order {order_id} from queue")
-                time.sleep(random.uniform(1, 2))  # زمان تحویل
+                time.sleep(random.uniform(1, 2))
                 logs.append(f"{name} --> delivered order {order_id}")
                 order_queue.task_done()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+       
         t_kitchen = Thread(target=kitchen, name="Kitchen")
 
         delivery_threads = []
-        for i in range(1, 4):  # سه پیک
+        for i in range(1, 4):
             t = Thread(target=delivery_boy, args=(f"DeliveryBoy-{i}",), name=f"DeliveryBoy-{i}")
             delivery_threads.append(t)
 
@@ -1728,7 +1659,7 @@ class ThreadManager:
         for t in delivery_threads:
             t.start()
 
-        # صبر می‌کنیم تا همه سفارش‌ها تحویل شوند
+        
         t_kitchen.join()
         order_queue.join()
 
@@ -1742,45 +1673,36 @@ class ThreadManager:
     def thread_queue_3(self):
         logs = []
 
-        from threading import Thread
-        from queue import Queue
-        import time
-        import random
+        
 
-        # صف سفارش‌های ثبت‌شده
+       
         order_queue = Queue()
 
-        # -------------------------------
-        # Producer: سیستم ثبت سفارش
-        # -------------------------------
+       
         def order_system():
-            for i in range(12):  # دوازده سفارش تولید می‌کنیم
+            for i in range(12):
                 order_id = random.randint(10000, 99999)
                 order_queue.put(order_id)
                 logs.append(f"OrderSystem --> New order {order_id} added to queue")
                 time.sleep(random.uniform(0.3, 1.0))
 
-        # -------------------------------
-        # Consumer: کارمندهای پردازش سفارش
-        # -------------------------------
+        
         def order_processor(name):
             while True:
                 order_id = order_queue.get()
                 logs.append(f"{name} --> picked order {order_id} from queue")
 
-                # زمان پردازش سفارش
+                
                 time.sleep(random.uniform(1.0, 2.0))
 
                 logs.append(f"{name} --> processed order {order_id}")
                 order_queue.task_done()
 
-        # -------------------------------
-        # اجرای نخ‌ها
-        # -------------------------------
+        
         t_producer = Thread(target=order_system, name="OrderSystem")
 
         processors = []
-        for i in range(1, 4):  # سه کارمند
+        for i in range(1, 4):
             t = Thread(target=order_processor, args=(f"Processor-{i}",), name=f"Processor-{i}")
             processors.append(t)
 
@@ -1788,7 +1710,7 @@ class ThreadManager:
         for t in processors:
             t.start()
 
-        # صبر می‌کنیم تا همه سفارش‌ها پردازش شوند
+        
         t_producer.join()
         order_queue.join()
 
