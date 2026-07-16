@@ -87,7 +87,7 @@ class ThreadManager:
 
     
                 
-    #--------------------------------------------------Define Section--------------------------------------------------
+   
     def my_func(self, thread_number):
             self.logs.append(f"my_func called by thread N°{thread_number}")
             time.sleep(randint(1, 3))
@@ -128,6 +128,7 @@ class ThreadManager:
                 f"Thread {thread_number} → task={task} → result={result} → finished at {finish_time}"
             )
 
+    
     # -------------------------
     # Thread + Define + Scenario 1
     # -------------------------        
@@ -531,15 +532,15 @@ class ThreadManager:
                 self.start_delay = randint(0, 3)
 
             def run(self):
-                # کاربر در زمان تصادفی اقدام به نوشتن می‌کند
+                
                 time.sleep(self.start_delay)
 
-                # گرفتن قفل (توکن)
+                
                 page_lock.acquire()
 
                 logs.append(f"{self.name} شروع به نوشتن کرد")
 
-                # شبیه‌سازی زمان نوشتن (بخش حساس طولانی)
+                
                 time.sleep(randint(1, 3))
 
                 text = f"متن نوشته شده توسط {self.name}\n"
@@ -551,7 +552,7 @@ class ThreadManager:
                 logs.append(f"{self.name} متن را به صفحه اضافه کرد")
                 logs.append(f"{self.name} نوشتن را تمام کرد")
 
-                # آزاد کردن قفل
+                
                 page_lock.release()
 
         users = [User(f"کاربر {i+1}") for i in range(5)]
@@ -588,24 +589,24 @@ class ThreadManager:
                 self.arrival_delay = randint(0, 2)
 
             def run(self):
-                # مشتری در زمان تصادفی وارد سیستم می‌شود
+                
                 time.sleep(self.arrival_delay)
 
-                # گرفتن قفل (توکن)
+                
                 seat_lock.acquire()
 
-                # مرحله 1: مشتری لیست را می‌خواند
+                
                 available = seats.copy()
                 logs.append(f"مشتری {self.cid} → لیست را دید: {available}")
 
-                # مرحله 2: مشتری یک صندلی انتخاب می‌کند
+                
                 chosen_seat = available[0]
                 logs.append(f"مشتری {self.cid} → صندلی {chosen_seat} را انتخاب کرد")
 
-                # مرحله 3: مشتری فکر می‌کند (بخش حساس طولانی)
+                
                 time.sleep(randint(1, 3))
 
-                # مرحله 4: مشتری رزرو می‌کند
+                
                 if chosen_seat in seats:
                     seats.remove(chosen_seat)
                     logs.append(f"مشتری {self.cid} → صندلی {chosen_seat} را رزرو کرد")
@@ -614,7 +615,7 @@ class ThreadManager:
 
                 logs.append(f"مشتری {self.cid} → کارش تمام شد")
 
-                # آزاد کردن قفل
+                
                 seat_lock.release()
 
         customers = [Customer(i+1) for i in range(10)]
@@ -668,20 +669,20 @@ class ThreadManager:
                 items -= 1
                 logs.append(f"REMOVED one item --> {items} item(s) left to REMOVE")
 
-        # مقدار اولیه
+        
         box = Box()
 
-        # ساخت نخ‌ها با تعداد آیتم تصادفی
+        
         t1 = threading.Thread(target=adder, args=(box, random.randint(10, 20)))
         t2 = threading.Thread(target=remover, args=(box, random.randint(1, 10)))
 
         start_time = time.time()
 
-        # اجرای نخ‌ها
+        
         t1.start()
         t2.start()
 
-        # منتظر پایان نخ‌ها
+        
         t1.join()
         t2.join()
 
@@ -706,7 +707,7 @@ class ThreadManager:
 
             def update_balance(self):
                 with self.lock:
-                    # شبیه‌سازی ذخیره‌سازی در دیتابیس
+                   
                     time.sleep(0.2)
                     logs.append(f"[{self.name}] موجودی به‌روزرسانی شد → {self.balance}")
 
@@ -714,32 +715,32 @@ class ThreadManager:
                 with self.lock:
                     self.balance += amount
                     logs.append(f"[{self.name}] واریز {amount} انجام شد → موجودی جدید: {self.balance}")
-                    self.update_balance()   # دوباره قفل گرفته می‌شود (نیاز به RLock)
+                    self.update_balance()
 
             def withdraw(self, amount):
                 with self.lock:
                     if self.balance >= amount:
                         self.balance -= amount
                         logs.append(f"[{self.name}] برداشت {amount} انجام شد → موجودی جدید: {self.balance}")
-                        self.update_balance()   # دوباره قفل گرفته می‌شود
+                        self.update_balance()
                     else:
                         logs.append(f"[{self.name}] برداشت {amount} ناموفق → موجودی کافی نیست")
 
             def transfer(self, target_account, amount):
                 with self.lock:
                     logs.append(f"شروع انتقال {amount} از {self.name} به {target_account.name}")
-                    self.withdraw(amount)          # دوباره قفل گرفته می‌شود
-                    target_account.deposit(amount) # دوباره قفل گرفته می‌شود
+                    self.withdraw(amount)
+                    target_account.deposit(amount)
                     logs.append(f"انتقال {amount} از {self.name} به {target_account.name} انجام شد")
 
-        # ساخت دو حساب بانکی
+     
         acc1 = BankAccount("حساب A", 1000)
         acc2 = BankAccount("حساب B", 500)
 
         logs.append(f"موجودی اولیه حساب A: {acc1.balance}")
         logs.append(f"موجودی اولیه حساب B: {acc2.balance}")
 
-        # دو نخ: یکی انتقال انجام می‌دهد، یکی واریز/برداشت
+        
         def task1():
             acc1.transfer(acc2, 300)
 
@@ -783,7 +784,7 @@ class ThreadManager:
 
             def update_total(self):
                 with self.lock:
-                    time.sleep(0.2)  # شبیه‌سازی پردازش
+                    time.sleep(0.2)
                     self.total_price = sum(price for _, price in self.items)
                     logs.append(f"[{self.owner}] مجموع قیمت به‌روزرسانی شد → {self.total_price}")
 
@@ -791,7 +792,7 @@ class ThreadManager:
                 with self.lock:
                     self.items.append((name, price))
                     logs.append(f"[{self.owner}] افزودن کالا: {name} ({price})")
-                    self.update_total()  # دوباره قفل گرفته می‌شود
+                    self.update_total()
 
             def remove_item(self, name):
                 with self.lock:
@@ -799,7 +800,7 @@ class ThreadManager:
                         if item[0] == name:
                             self.items.remove(item)
                             logs.append(f"[{self.owner}] حذف کالا: {name}")
-                            self.update_total()  # دوباره قفل گرفته می‌شود
+                            self.update_total()
                             return
                     logs.append(f"[{self.owner}] کالا {name} یافت نشد")
 
@@ -807,19 +808,19 @@ class ThreadManager:
                 with self.lock:
                     logs.append(f"[{self.owner}] شروع تسویه حساب...")
                     time.sleep(0.5)
-                    self.update_total()  # دوباره قفل گرفته می‌شود
+                    self.update_total()
                     logs.append(f"[{self.owner}] تسویه حساب انجام شد → مبلغ نهایی: {self.total_price}")
 
-        # ساخت دو سبد خرید
+        
         cart1 = ShoppingCart("سبد A")
         cart2 = ShoppingCart("سبد B")
 
-        # چاپ وضعیت اولیه
+        
         logs.append("سبدها قبل از شروع عملیات:")
         logs.append(f"سبد A → مجموع: {cart1.total_price}")
         logs.append(f"سبد B → مجموع: {cart2.total_price}")
 
-        # دو نخ همزمان
+        
         def task1():
             cart1.add_item("کتاب", 120)
             cart1.add_item("خودکار", 20)
@@ -857,21 +858,21 @@ class ThreadManager:
     def thread_semaphore_1(self):
         logs = []
 
-        NUM = 5  # تعداد فیلسوف‌ها
+        NUM = 5
         forks = [threading.Semaphore(1) for _ in range(NUM)]
-        room = threading.Semaphore(4)  # فقط 4 فیلسوف همزمان اجازه ورود دارند
+        room = threading.Semaphore(4)
 
-        # تابع کمکی برای ساخت لاگ شبیه logging
+        
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
         def philosopher(i):
             name = f"Philosopher-{i}"
 
-            #for _ in range(2):  # هر فیلسوف دو بار غذا می‌خورد
+            
             make_log(name, "در حال فکر کردن...")
 
-            room.acquire()  # اجازه ورود به اتاق (جلوگیری از بن‌بست)
+            room.acquire()
 
             make_log(name, "درخواست چنگال چپ")
             forks[i].acquire()
@@ -886,7 +887,7 @@ class ThreadManager:
             forks[i].release()
             forks[(i + 1) % NUM].release()
 
-            room.release()  # خروج از اتاق
+            room.release()
 
             make_log(name, "تمام شد، برگشت به فکر کردن")
 
@@ -922,8 +923,7 @@ class ThreadManager:
 
         # تابع کمکی برای ساخت لاگ شبیه logging
         def make_log(thread_name, message):
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            logs.append(f"{timestamp} {thread_name:17s} INFO {message}")
+            logs.append(f"{thread_name} ---> {message}")
 
         # رفتار آرایشگر
         def barber_thread():

@@ -118,7 +118,7 @@ def get_scenarios(method: str, tool: str):
                 {"id": "lock_3", "title": "رزرو صندلی سینما"},
             ],
             "rlock": [
-                {"id": "rlock_1", "title": "مثال کتاب"},
+                {"id": "rlock_1", "title": "حذف و اضافه"},
                 {"id": "rlock_2", "title": "عملیات بانکی"},
                 {"id": "rlock_3", "title": "سبد خرید"},
             ],
