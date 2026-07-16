@@ -991,31 +991,31 @@ class ThreadManager:
     def thread_semaphore_3(self):
         logs = []
 
-        # فقط 5 اتصال همزمان مجاز است
+        
         db_semaphore = threading.Semaphore(5)
 
-        # تابع کمکی برای ساخت لاگ شبیه logging
+        
         def make_log(thread_name, message):
             logs.append(f"{thread_name} --> {message}")
 
-        # شبیه‌سازی اتصال به دیتابیس
+        
         def access_database(thread_name):
             make_log(thread_name, "درخواست اتصال به دیتابیس")
 
-            db_semaphore.acquire()  # اگر ظرفیت پر باشد → منتظر می‌ماند
+            db_semaphore.acquire()
             make_log(thread_name, "اتصال برقرار شد")
 
-            # شبیه‌سازی کار با دیتابیس
+            
             time.sleep(random.uniform(1, 3))
 
             make_log(thread_name, "اتصال آزاد شد")
-            db_semaphore.release()  # ظرفیت آزاد می‌شود
+            db_semaphore.release()
 
         start = time.time()
 
         threads = []
 
-        # 20 نخ → ولی فقط 5 تا همزمان اجازه ورود دارند
+        
         for i in range(20):
             t_name = f"Thread-{i+1}"
             t = threading.Thread(target=access_database, args=(t_name,))
