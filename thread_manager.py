@@ -914,40 +914,40 @@ class ThreadManager:
     def thread_semaphore_2(self):
         logs = []
 
-        NUM_CHAIRS = 3  # تعداد صندلی‌های انتظار
-        waiting = 0     # تعداد مشتری‌های منتظر
+        NUM_CHAIRS = 3
+        waiting = 0
 
-        customers = threading.Semaphore(0)  # مشتری‌ها آرایشگر را بیدار می‌کنند
-        barber = threading.Semaphore(0)     # آرایشگر مشتری را صدا می‌زند
-        mutex = threading.Semaphore(1)      # محافظت از waiting
+        customers = threading.Semaphore(0)
+        barber = threading.Semaphore(0)
+        mutex = threading.Semaphore(1)
 
-        # تابع کمکی برای ساخت لاگ شبیه logging
+        
         def make_log(thread_name, message):
             logs.append(f"{thread_name} ---> {message}")
 
-        # رفتار آرایشگر
+    
         def barber_thread():
             nonlocal waiting
-            name = "Barber"
+            name = "آرایشگر"
 
             while True:
                 make_log(name, "در حال خوابیدن...")
-                customers.acquire()  # منتظر مشتری می‌ماند
+                customers.acquire()
 
                 mutex.acquire()
                 waiting -= 1
                 make_log(name, f"یک مشتری را صدا زد (منتظرها: {waiting})")
                 mutex.release()
 
-                barber.release()  # مشتری اجازه دارد وارد شود
+                barber.release()
 
                 make_log(name, "در حال اصلاح مو...")
                 time.sleep(random.uniform(1, 2))
 
-        # رفتار مشتری
+        
         def customer_thread(i):
             nonlocal waiting
-            name = f"Customer-{i}"
+            name = f"مشتری-{i}"
 
             make_log(name, "وارد آرایشگاه شد")
 
@@ -955,10 +955,10 @@ class ThreadManager:
             if waiting < NUM_CHAIRS:
                 waiting += 1
                 make_log(name, f"روی صندلی نشست (منتظرها: {waiting})")
-                customers.release()  # آرایشگر را بیدار می‌کند
+                customers.release()
                 mutex.release()
 
-                barber.acquire()  # منتظر می‌ماند تا آرایشگر صدایش کند
+                barber.acquire()
                 make_log(name, "در حال اصلاح مو")
                 time.sleep(random.uniform(0.5, 1.5))
                 make_log(name, "آرایش تمام شد و رفت")
@@ -966,7 +966,7 @@ class ThreadManager:
                 make_log(name, "جا نبود، برگشت")
                 mutex.release()
 
-        # اجرای نخ‌ها
+        
         t_barber = threading.Thread(target=barber_thread, daemon=True)
         t_barber.start()
 
