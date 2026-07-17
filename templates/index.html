@@ -135,7 +135,7 @@
 
                 toolsContainer.innerHTML = html;
 
-                // وقتی ابزار تغییر کرد → سناریوها را بگیر
+                
                 document.getElementById("tool").addEventListener("change", function () {
                     const tool = this.value;
 
@@ -151,7 +151,7 @@
             });
     });
 
-    // اجرای سناریو
+    
     runBtn.addEventListener("click", function () {
         const method = document.getElementById("method").value;
         const tool = document.getElementById("tool")?.value;

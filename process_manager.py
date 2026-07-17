@@ -1642,8 +1642,6 @@ class ProcessManager:
 
         return list(self.logs)
 
-
-
     def barrier_scenario_1(self):
 
         manager = multiprocessing.Manager()
