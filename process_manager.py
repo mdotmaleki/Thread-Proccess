@@ -427,13 +427,25 @@ class HashWorker:
     @staticmethod
     def hash_password(password: str):
 
-        # تبدیل پسورد به هش SHA256
+        
         hashed = hashlib.sha256(
             password.encode("utf-8")
         ).hexdigest()
 
         return hashed
 
+class FileWorker:
+
+    @staticmethod
+    def count_words(text: str):
+
+        words = text.split()
+
+        return {
+            "text": text,
+            "word_count": len(words)
+        }
+    
 class BarrierWorker(multiprocessing.Process):
 
     def __init__(self, logs, synchronizer, serializer, use_barrier=True):
@@ -478,11 +490,12 @@ class BarrierImageWorker:
 
         logs.append(f"{name} -> Processing {image_name}")
 
+        
         time.sleep(random.randint(1, 4))
 
         logs.append(f"{name} -> Finished {image_name}")
 
-        # منتظر همه Processها
+        
         barrier.wait()
 
         with lock:
@@ -1545,7 +1558,7 @@ class ProcessManager:
         manager = multiprocessing.Manager()
         self.logs = manager.list()
 
-        # لیست پسوردها
+        
         passwords = [
             "pass123",
             "hello2024",
@@ -1560,11 +1573,11 @@ class ProcessManager:
         ]
 
 
-        # ساخت Pool با 4 پردازش
+        
         pool = multiprocessing.Pool(processes=4)
 
 
-        # اجرای موازی هش کردن
+        
         hashed_results = pool.map(
             HashWorker.hash_password,
             passwords
@@ -1613,7 +1626,7 @@ class ProcessManager:
         pool.join()
 
 
-        # هر خروجی در یک خط جدا
+        
         self.logs.append("Pool Word Count Results:")
 
         for index, result in enumerate(results, start=1):
