@@ -33,6 +33,52 @@ Thread-Proccess/
 ---
 
 ---
+## ثبت دامنه در Cloudflare برای مدیریت آن و استفاده از proxy
+![کلودفلر](images/cloudflare.png)
+---
+
+---
+## تنظیم Cloudflare DNS برای دامنه ثبت شده در IRNIC
+![ایرنیک](images/irnic.png)
+---
+
+---
+## تهیه سرور مجازی VPS از شرکت پارس پک
+![پارس پک](images/parspack.png)
+---
+
+---
+## نصب داکر روی سرور
+![داکر](images/docker1.png)
+---
+
+---
+## نصب نیازمندی ها از فایل Requierments.txt
+![نیازمندی ها](images/req.png)
+---
+
+---
+## Image ساخته شده روی سرور
+![image](images/image.png)
+---
+
+---
+## نصب و پیکربندی nginx
+![nginx](images/nginx1.png)
+![nginx](images/nginx2.png)
+---
+
+---
+## استفاده از nginx certbot برای فعالسازی https
+![https](images/https1.png)
+![https](images/https2.png)
+---
+
+## فعالسازی CI/CD برای دیپلوی خودکار تغییرات روی سرور
+![cicd](images/cicd.png)
+---
+
+---
  ## اجرای پروژه با Docker
  ---
 1) ساخت ایمیج
