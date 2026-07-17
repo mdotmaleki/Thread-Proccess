@@ -1,4 +1,4 @@
-from multiprocessing import Barrier, Lock
+#from multiprocessing import Barrier, Lock
 from multiprocessing import Process
 from datetime import datetime
 import hashlib
@@ -453,7 +453,7 @@ class BarrierWorker(multiprocessing.Process):
 
             self.synchronizer.wait()
 
-            now = time()
+            now = time.time()
 
             with self.serializer:
 
@@ -463,7 +463,7 @@ class BarrierWorker(multiprocessing.Process):
 
         else:
 
-            now = time()
+            now = time.time()
 
             self.logs.append(
                 f"{name} ----> {datetime.fromtimestamp(now)}"
