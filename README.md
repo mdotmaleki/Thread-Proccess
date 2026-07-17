@@ -79,16 +79,13 @@ Thread-Proccess/
 ---
 
 ---
- ## اجرای پروژه با Docker
+ ## پروژه نهایی
  ---
-1) ساخت ایمیج
-- docker build -t thread-proccess .
 
-2) اجرای کانتینر
-- docker run -d -p 8000:8000 thread-proccess
+## آدرس
+https://meysam-maleki.ir
 
-3) مشاهده پروژه
-- https://meysam-maleki.ir
+![site](images/site.png)
 
 ---
  ## نحوه ارسال تغییرات به GitHub
