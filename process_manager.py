@@ -34,14 +34,13 @@ class MyProcess(multiprocessing.Process):
         self.index = index
 
     def run(self):
-        # این همان کاری است که فرایند انجام می‌دهد
         self.logs.append(f"called run method by {self.name}")
         return
 
 class MessageProcess(multiprocessing.Process):
 
     def __init__(self, logs, message, delay, index):
-        super().__init__(name=f"message_process_{index}")
+        super().__init__(name=f"message_processor_{index}")
         self.logs = logs
         self.message = message
         self.delay = delay
@@ -123,7 +122,7 @@ class Dispatcher(multiprocessing.Process):
                 time.sleep(1)
                 continue
 
-            # پیدا کردن پردازنده آزاد
+            
             free_processor = None
             for i in range(3):
                 if not self.busy_flags[i]:
@@ -136,7 +135,7 @@ class Dispatcher(multiprocessing.Process):
                 continue
 
             job = self.queue.get()
-            self.busy_flags[free_processor] = True  # پردازنده مشغول شد
+            self.busy_flags[free_processor] = True
 
             self.worker_queues[free_processor].put(job)
             self.logs.append(f"{job} sent to processor_{free_processor+1}")
@@ -165,7 +164,7 @@ class Processor(multiprocessing.Process):
             time.sleep(random.uniform(1, 2))
 
             self.logs.append(f"processor_{self.index} finished {job}")
-            self.busy_flags[self.index - 1] = False  # پردازنده آزاد شد
+            self.busy_flags[self.index - 1] = False  
 
 class Sender(multiprocessing.Process):
 
@@ -176,7 +175,7 @@ class Sender(multiprocessing.Process):
 
     def run(self):
         data_id = 1
-        while data_id <= 30:  # تعداد داده‌ها
+        while data_id <= 30:
             if self.queue.full():
                 self.logs.append("queue full, sender waiting...")
                 time.sleep(0.1)
@@ -188,7 +187,7 @@ class Sender(multiprocessing.Process):
             self.logs.append(f"queue size is {self.queue.qsize()}")
 
             data_id += 1
-            time.sleep(0.1)  # سرعت 10 داده بر ثانیه
+            time.sleep(0.1)
 
 class Receiver(multiprocessing.Process):
 
@@ -208,7 +207,7 @@ class Receiver(multiprocessing.Process):
             self.logs.append(f"{data} consumed by receiver")
             self.logs.append(f"queue size is {self.queue.qsize()}")
 
-            time.sleep(0.2)  # سرعت 5 داده بر ثانیه
+            time.sleep(0.2) 
 
 class ProducerPipe(multiprocessing.Process):
 
@@ -435,29 +434,40 @@ class HashWorker:
 
         return hashed
 
-class BarrierWorker:
+class BarrierWorker(multiprocessing.Process):
 
-    @staticmethod
-    def with_barrier(synchronizer, serializer, logs):
+    def __init__(self, logs, synchronizer, serializer, use_barrier=True):
+        super().__init__()
 
-        name = multiprocessing.current_process().name
-
-        synchronizer.wait()
-
-        now = datetime.fromtimestamp(time.time())
-
-        with serializer:
-            logs.append(f"{name} ----> {now}")
+        self.logs = logs
+        self.synchronizer = synchronizer
+        self.serializer = serializer
+        self.use_barrier = use_barrier
 
 
-    @staticmethod
-    def without_barrier(logs):
+    def run(self):
 
         name = multiprocessing.current_process().name
 
-        now = datetime.fromtimestamp(time.time())
+        if self.use_barrier:
 
-        logs.append(f"{name} ----> {now}")
+            self.synchronizer.wait()
+
+            now = time()
+
+            with self.serializer:
+
+                self.logs.append(
+                    f"{name} ----> {datetime.fromtimestamp(now)}"
+                )
+
+        else:
+
+            now = time()
+
+            self.logs.append(
+                f"{name} ----> {datetime.fromtimestamp(now)}"
+            )
 
 class BarrierImageWorker:
 
@@ -689,7 +699,7 @@ class ProcessManager:
         name = multiprocessing.current_process().name
         logs.append(f"[{name}] Sender started")
 
-        for i in range(1, 6):  # ارسال 5 پیام
+        for i in range(1, 6):
             wait_time = random.randint(2, 4)
             time.sleep(wait_time)
 
@@ -704,9 +714,9 @@ class ProcessManager:
         while True:
             logs.append(f"[{name}] reciever is listening ...")
 
-            # شبیه‌سازی دریافت پیام تصادفی از بیرون
+            
             time.sleep(1)
-            if random.choice([True, False]):  # گاهی پیام می‌رسد، گاهی نه
+            if random.choice([True, False]):
                 msg_number = random.randint(1, 20)
                 logs.append(f"[{name}] reciever: A message number {msg_number} recieved")
 
@@ -851,6 +861,8 @@ class ProcessManager:
 
         return list(logs)
     
+
+
     def naming_scenario_1(self):
 
         manager = multiprocessing.Manager()
@@ -960,7 +972,7 @@ class ProcessManager:
 
         return list(self.logs)
 
-    
+
 
     def background_scenario_1(self):
 
@@ -1189,6 +1201,8 @@ class ProcessManager:
         self.logs.append("End")
         return list(self.logs)
     
+
+
     def subclass_scenario_1(self):
 
         manager = multiprocessing.Manager()
@@ -1196,18 +1210,15 @@ class ProcessManager:
 
         processes = []
 
-        # ساخت 10 فرایند از کلاس سفارشی
         for i in range(1, 11):
             p = MyProcess(self.logs, i)
             processes.append(p)
 
-        # اجرای فرایندها
+        
         for p in processes:
             p.start()
-            p.join()  # منتظر می‌مانیم تا هر فرایند به پایان برسد
-        # join کردن همه
-        #for p in processes:
-         #   p.join()
+            p.join()
+        
 
         self.logs.append("End")
         return list(self.logs)
@@ -1220,16 +1231,16 @@ class ProcessManager:
         numbers = [3, 5, 7, 9]
         processes = []
 
-        # ساخت فرایندهای subclass
+        
         for i, num in enumerate(numbers, start=1):
             p = SquareProcess(self.logs, num, i)
             processes.append(p)
 
-        # اجرای فرایندها
+        
         for p in processes:
             p.start()
 
-        # join کردن همه
+        
         for p in processes:
             p.join()
 
@@ -1252,23 +1263,25 @@ class ProcessManager:
 
         processes = []
 
-        # ساخت فرایندهای subclass با تاخیرهای تصادفی
+        
         for i, msg in enumerate(messages, start=1):
             delay = random.randint(1, 5)
             p = MessageProcess(self.logs, msg, delay, i)
             processes.append(p)
 
-        # اجرای فرایندها
+        
         for p in processes:
             p.start()
 
-        # join کردن همه
+        
         for p in processes:
             p.join()
 
         self.logs.append("End")
         return list(self.logs)
     
+
+
     def queue_scenario_1(self):
 
         manager = multiprocessing.Manager()
@@ -1296,7 +1309,7 @@ class ProcessManager:
         main_queue = multiprocessing.Queue(maxsize=5)
         worker_queues = [multiprocessing.Queue() for _ in range(3)]
 
-        # وضعیت پردازنده‌ها: False = آزاد، True = مشغول
+        
         busy_flags = manager.list([False, False, False])
 
         maker = JobMaker(self.logs, main_queue)
@@ -1338,11 +1351,13 @@ class ProcessManager:
 
         sender.join()
 
-        # گیرنده را بعد از پایان کار فرستنده متوقف می‌کنیم
+        
         receiver.terminate()
 
         self.logs.append("End")
         return list(self.logs)
+
+
 
     def pipe_scenario_1(self):
 
@@ -1369,7 +1384,7 @@ class ProcessManager:
 
         square.start()
 
-        # مطابق مثال PDF
+        
         pipe_1[0].close()
 
         pipe_2[0].close()
@@ -1502,6 +1517,8 @@ class ProcessManager:
 
         return list(self.logs)
       
+
+
     def pool_scenario_1(self):
 
         manager = multiprocessing.Manager()
@@ -1612,42 +1629,78 @@ class ProcessManager:
 
         return list(self.logs)
 
+
+
     def barrier_scenario_1(self):
 
         manager = multiprocessing.Manager()
+
         self.logs = manager.list()
 
-        synchronizer = Barrier(2)
-        serializer = Lock()
 
-        # ساخت پردازش‌ها بدون name
-        p1 = Process(target=BarrierWorker.with_barrier,
-                     args=(synchronizer, serializer, self.logs))
-        p2 = Process(target=BarrierWorker.with_barrier,
-                     args=(synchronizer, serializer, self.logs))
-        p3 = Process(target=BarrierWorker.without_barrier,
-                     args=(self.logs,))
-        p4 = Process(target=BarrierWorker.without_barrier,
-                     args=(self.logs,))
+        synchronizer = multiprocessing.Barrier(2)
 
-        # تنظیم نام‌ها بعد از ساخت
+        serializer = multiprocessing.Lock()
+
+
+        p1 = BarrierWorker(
+            self.logs,
+            synchronizer,
+            serializer,
+            True
+        )
+
         p1.name = "p1 - with_barrier"
+
+
+        p2 = BarrierWorker(
+            self.logs,
+            synchronizer,
+            serializer,
+            True
+        )
+
         p2.name = "p2 - with_barrier"
+
+
+
+        p3 = BarrierWorker(
+            self.logs,
+            synchronizer,
+            serializer,
+            False
+        )
+
         p3.name = "p3 - without_barrier"
+
+
+
+        p4 = BarrierWorker(
+            self.logs,
+            synchronizer,
+            serializer,
+            False
+        )
+
         p4.name = "p4 - without_barrier"
 
-        # اجرای پردازش‌ها
+
+
         p1.start()
         p2.start()
         p3.start()
         p4.start()
+
+
 
         p1.join()
         p2.join()
         p3.join()
         p4.join()
 
+
         self.logs.append("End")
+
 
         return list(self.logs)
 
