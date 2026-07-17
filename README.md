@@ -19,27 +19,6 @@
 - رابط کاربری ساده و سبک با **HTMX**
 - پروژه **Dockerized**
 
-
----
-
-## ساختار پروژه
-
-```text
-Thread-Proccess/
-├── main.py
-├── Dockerfile
-├── .gitignore
-├── .dockerignore
-├── templates/
-│   └── index.html
-└── سایر فایل‌های پروژه
-```
-
----
-## ساختار کلی دسترسی به پروژه
-![ساختار کلی درخواست](images/req-tree.jpg)
----
-
 ---
 ## ثبت دامنه در Cloudflare برای مدیریت آن و استفاده از proxy
 ![کلودفلر](images/cloudflare.png)
@@ -84,6 +63,24 @@ Thread-Proccess/
 
 ## فعالسازی CI/CD برای دیپلوی خودکار تغییرات روی سرور
 ![cicd](images/cicd.png)
+---
+
+## ساختار پروژه
+
+```text
+Thread-Proccess/
+├── main.py
+├── Dockerfile
+├── .gitignore
+├── .dockerignore
+├── templates/
+│   └── index.html
+└── سایر فایل‌های پروژه
+```
+
+---
+## ساختار کلی دسترسی به پروژه
+![ساختار کلی درخواست](images/req-tree.jpg)
 ---
 
 ---
