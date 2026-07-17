@@ -513,6 +513,227 @@ class ProcessManager:
                 f"Output from Process_worker is {j}"
             )
 
+    def download_worker(self, logs):
+
+        logs.append("Download Process started")
+
+        for i in range(1, 4):
+            time.sleep(1)
+            logs.append(
+                f"Downloading file part {i}/3"
+            )
+
+        logs.append("Download Process finished")
+
+    def analysis_worker(self, logs):
+
+        logs.append("Analysis Process started")
+
+        numbers = [10, 20, 30, 40, 50]
+
+        result = sum(numbers)
+
+        time.sleep(2)
+
+        logs.append(
+            f"Analysis result = {result}"
+        )
+
+        logs.append("Analysis Process finished")
+
+    def database_worker(self, logs):
+
+        logs.append("Database Process started")
+
+
+        data = {
+            "user": "Meysam",
+            "score": 95
+        }
+
+
+        time.sleep(1)
+
+
+        logs.append(
+            f"Saved data: {data}"
+        )
+
+
+        logs.append(
+            "Database Process finished"
+        )
+
+    def naming_worker(self):
+        name = multiprocessing.current_process().name
+        self.logs.append(f"Starting process name = {name}")
+        time.sleep(3)
+        self.logs.append(f"Exiting process name = {name}")
+
+    def adder_worker(self, numbers, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Starting adder worker")
+
+        result = sum(numbers)
+        logs.append(f"[{name}] Sum result = {result}")
+
+        logs.append(f"[{name}] Finished adder worker")
+
+    def randomizer_worker(self, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Starting randomizer worker")
+
+        value = random.randint(1, 100)
+        logs.append(f"[{name}] Random value = {value}")
+
+        logs.append(f"[{name}] Finished randomizer worker")
+
+    def reverser_worker(self, text, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Starting reverser worker")
+
+        reversed_text = text[::-1]
+        logs.append(f"[{name}] Reversed text = {reversed_text}")
+
+        logs.append(f"[{name}] Finished reverser worker")
+
+    def encrypt_worker(self, text, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Starting encryption")
+
+        encrypted = "".join(chr(ord(c) + 3) for c in text)
+        logs.append(f"[{name}] Encrypted result = {encrypted}")
+
+        logs.append(f"[{name}] Finished encryption")
+
+    def decrypt_worker(self, encrypted_text, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Starting decryption")
+
+        decrypted = "".join(chr(ord(c) - 3) for c in encrypted_text)
+        logs.append(f"[{name}] Decrypted result = {decrypted}")
+
+        logs.append(f"[{name}] Finished decryption")
+
+    def hash_worker(self, text, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Starting hashing")
+
+        hashed = hashlib.sha256(text.encode()).hexdigest()
+        logs.append(f"[{name}] SHA256 hash = {hashed}")
+
+        logs.append(f"[{name}] Finished hashing")
+
+    def background_mode_worker(self, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"Starting {name}")
+
+        if name == "background_process":
+            for i in range(0, 5):
+                logs.append(f"[{name}] ---> {i}")
+                time.sleep(1)
+        else:
+            for i in range(5, 10):
+                logs.append(f"[{name}] ---> {i}")
+                time.sleep(1)
+
+        logs.append(f"Exiting {name}")
+
+    def writer_worker(self, logs, shared_data):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Writer started")
+
+        for i in range(1, 4):
+            logs.append(f"[{name}] writer process is writing...")
+
+            write_time = random.randint(3, 5)
+            time.sleep(write_time)
+
+            shared_data["last_write"] = f"Write #{i} completed"
+            logs.append(f"[{name}] Write #{i} completed in {write_time} seconds")
+
+        logs.append(f"[{name}] Writer finished")
+
+    def background_saver_worker(self, logs, shared_data):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Background saver started")
+
+        while True:
+            time.sleep(1)
+            logs.append(f"[{name}] changes saved by background process successfully")
+
+    def writer_worker(self, logs, shared_data):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Writer started")
+
+        for i in range(1, 4):
+            write_time = random.randint(3, 5)
+
+            logs.append(f"[{name}] writer process is writing... (duration: {write_time} sec)")
+            time.sleep(write_time)
+
+            shared_data["last_write"] = f"Write #{i} completed"
+            #logs.append(f"[{name}] Write #{i} completed in {write_time} seconds")
+
+        logs.append(f"[{name}] Writer finished")
+
+    def background_saver_worker(self, logs, shared_data):
+        name = multiprocessing.current_process().name
+        #logs.append(f"[{name}] Background saver started")
+
+        while True:
+            time.sleep(1)
+            logs.append(f"[{name}] changes saved by background process successfully")
+
+    def sender_worker(self, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Sender started")
+
+        for i in range(1, 6):  # ارسال 5 پیام
+            wait_time = random.randint(2, 4)
+            time.sleep(wait_time)
+
+            logs.append(f"[{name}] sender: sent a message number {i}")
+
+        logs.append(f"[{name}] Sender finished")
+
+    def listener_worker(self, logs):
+        name = multiprocessing.current_process().name
+        logs.append(f"[{name}] Listener started")
+
+        while True:
+            logs.append(f"[{name}] reciever is listening ...")
+
+            # شبیه‌سازی دریافت پیام تصادفی از بیرون
+            time.sleep(1)
+            if random.choice([True, False]):  # گاهی پیام می‌رسد، گاهی نه
+                msg_number = random.randint(1, 20)
+                logs.append(f"[{name}] reciever: A message number {msg_number} recieved")
+
+    def foo_worker(self, logs):
+        logs.append("Starting function")
+
+        for i in range(0, 10):
+            logs.append(f"---> {i}")
+            time.sleep(1)
+
+        logs.append("Finished function")
+
+    def firstWorker(self, logs, index):
+        name = multiprocessing.current_process().name
+        duration = random.randint(1, 10)
+        logs.append(f"{name} started, will take {duration} secs")
+        time.sleep(duration)
+        logs.append(f"{name} finished normally in {duration} secs")
+
+    def secondWorker(self, logs, index):
+        name = multiprocessing.current_process().name
+        logs.append(f"{name} is calculating")
+        time.sleep(2)
+        logs.append(f"{name} finished calculation")
+
+
+
     def spawn_scenario_1(self):
 
         manager = multiprocessing.Manager()
@@ -576,57 +797,6 @@ class ProcessManager:
 
         return list(self.logs)
     
-    def download_worker(self, logs):
-
-            logs.append("Download Process started")
-
-            for i in range(1, 4):
-                time.sleep(1)
-                logs.append(
-                    f"Downloading file part {i}/3"
-                )
-
-            logs.append("Download Process finished")
-
-    def analysis_worker(self, logs):
-
-        logs.append("Analysis Process started")
-
-        numbers = [10, 20, 30, 40, 50]
-
-        result = sum(numbers)
-
-        time.sleep(2)
-
-        logs.append(
-            f"Analysis result = {result}"
-        )
-
-        logs.append("Analysis Process finished")
-
-    def database_worker(self, logs):
-
-        logs.append("Database Process started")
-
-
-        data = {
-            "user": "Meysam",
-            "score": 95
-        }
-
-
-        time.sleep(1)
-
-
-        logs.append(
-            f"Saved data: {data}"
-        )
-
-
-        logs.append(
-            "Database Process finished"
-        )
-
     def spawn_scenario_3(self):
 
         manager = multiprocessing.Manager()
@@ -681,12 +851,6 @@ class ProcessManager:
 
         return list(logs)
     
-    def naming_worker(self):
-        name = multiprocessing.current_process().name
-        self.logs.append(f"Starting process name = {name}")
-        time.sleep(3)
-        self.logs.append(f"Exiting process name = {name}")
-
     def naming_scenario_1(self):
 
         manager = multiprocessing.Manager()
@@ -716,33 +880,6 @@ class ProcessManager:
 
         return list(self.logs)
     
-    def adder_worker(self, numbers, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Starting adder worker")
-
-        result = sum(numbers)
-        logs.append(f"[{name}] Sum result = {result}")
-
-        logs.append(f"[{name}] Finished adder worker")
-
-    def randomizer_worker(self, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Starting randomizer worker")
-
-        value = random.randint(1, 100)
-        logs.append(f"[{name}] Random value = {value}")
-
-        logs.append(f"[{name}] Finished randomizer worker")
-
-    def reverser_worker(self, text, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Starting reverser worker")
-
-        reversed_text = text[::-1]
-        logs.append(f"[{name}] Reversed text = {reversed_text}")
-
-        logs.append(f"[{name}] Finished reverser worker")
-
     def naming_scenario_2(self):
 
         manager = multiprocessing.Manager()
@@ -781,33 +918,6 @@ class ProcessManager:
         self.logs.append(f"{total:.2f} seconds")
 
         return list(self.logs)
-   
-    def encrypt_worker(self, text, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Starting encryption")
-
-        encrypted = "".join(chr(ord(c) + 3) for c in text)
-        logs.append(f"[{name}] Encrypted result = {encrypted}")
-
-        logs.append(f"[{name}] Finished encryption")
-
-    def decrypt_worker(self, encrypted_text, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Starting decryption")
-
-        decrypted = "".join(chr(ord(c) - 3) for c in encrypted_text)
-        logs.append(f"[{name}] Decrypted result = {decrypted}")
-
-        logs.append(f"[{name}] Finished decryption")
-
-    def hash_worker(self, text, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Starting hashing")
-
-        hashed = hashlib.sha256(text.encode()).hexdigest()
-        logs.append(f"[{name}] SHA256 hash = {hashed}")
-
-        logs.append(f"[{name}] Finished hashing")
 
     def naming_scenario_3(self):
         manager = multiprocessing.Manager()
@@ -850,20 +960,7 @@ class ProcessManager:
 
         return list(self.logs)
 
-    def background_mode_worker(self, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"Starting {name}")
-
-        if name == "background_process":
-            for i in range(0, 5):
-                logs.append(f"[{name}] ---> {i}")
-                time.sleep(1)
-        else:
-            for i in range(5, 10):
-                logs.append(f"[{name}] ---> {i}")
-                time.sleep(1)
-
-        logs.append(f"Exiting {name}")
+    
 
     def background_scenario_1(self):
 
@@ -898,52 +995,6 @@ class ProcessManager:
         self.logs.append(f"{total:.2f} seconds")
 
         return list(self.logs)
-    
-    def writer_worker(self, logs, shared_data):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Writer started")
-
-        for i in range(1, 4):
-            logs.append(f"[{name}] writer process is writing...")
-
-            write_time = random.randint(3, 5)
-            time.sleep(write_time)
-
-            shared_data["last_write"] = f"Write #{i} completed"
-            logs.append(f"[{name}] Write #{i} completed in {write_time} seconds")
-
-        logs.append(f"[{name}] Writer finished")
-
-    def background_saver_worker(self, logs, shared_data):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Background saver started")
-
-        while True:
-            time.sleep(1)
-            logs.append(f"[{name}] changes saved by background process successfully")
-
-    def writer_worker(self, logs, shared_data):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Writer started")
-
-        for i in range(1, 4):
-            write_time = random.randint(3, 5)
-
-            logs.append(f"[{name}] writer process is writing... (duration: {write_time} sec)")
-            time.sleep(write_time)
-
-            shared_data["last_write"] = f"Write #{i} completed"
-            #logs.append(f"[{name}] Write #{i} completed in {write_time} seconds")
-
-        logs.append(f"[{name}] Writer finished")
-
-    def background_saver_worker(self, logs, shared_data):
-        name = multiprocessing.current_process().name
-        #logs.append(f"[{name}] Background saver started")
-
-        while True:
-            time.sleep(1)
-            logs.append(f"[{name}] changes saved by background process successfully")
 
     def background_scenario_2(self):
 
@@ -979,31 +1030,6 @@ class ProcessManager:
 
         return list(self.logs)
     
-    def sender_worker(self, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Sender started")
-
-        for i in range(1, 6):  # ارسال 5 پیام
-            wait_time = random.randint(2, 4)
-            time.sleep(wait_time)
-
-            logs.append(f"[{name}] sender: sent a message number {i}")
-
-        logs.append(f"[{name}] Sender finished")
-
-    def listener_worker(self, logs):
-        name = multiprocessing.current_process().name
-        logs.append(f"[{name}] Listener started")
-
-        while True:
-            logs.append(f"[{name}] reciever is listening ...")
-
-            # شبیه‌سازی دریافت پیام تصادفی از بیرون
-            time.sleep(1)
-            if random.choice([True, False]):  # گاهی پیام می‌رسد، گاهی نه
-                msg_number = random.randint(1, 20)
-                logs.append(f"[{name}] reciever: A message number {msg_number} recieved")
-
     def background_scenario_3(self):
 
         manager = multiprocessing.Manager()
@@ -1036,14 +1062,7 @@ class ProcessManager:
 
         return list(self.logs)
     
-    def foo_worker(self, logs):
-        logs.append("Starting function")
-
-        for i in range(0, 10):
-            logs.append(f"---> {i}")
-            time.sleep(1)
-
-        logs.append("Finished function")
+    
 
     def killing_scenario_1(self):
 
@@ -1076,13 +1095,6 @@ class ProcessManager:
         self.logs.append("End")
 
         return list(self.logs)
-    
-    def worker(self, logs, index):
-        name = multiprocessing.current_process().name
-        duration = random.randint(1, 10)
-        logs.append(f"{name} started, will take {duration} secs")
-        time.sleep(duration)
-        logs.append(f"{name} finished normally in {duration} secs")
 
     def killing_scenario_2(self):
 
@@ -1095,7 +1107,7 @@ class ProcessManager:
         # ساخت 3 worker
         for i in range(3):
             p = multiprocessing.Process(
-                target=self.worker,
+                target=self.firstWorker,
                 name=f"worker_process_{i+1}",
                 args=(self.logs, i)
             )
@@ -1137,12 +1149,6 @@ class ProcessManager:
         self.logs.append("End")
         return list(self.logs)
     
-    def worker(self, logs, index):
-        name = multiprocessing.current_process().name
-        logs.append(f"{name} is calculating")
-        time.sleep(2)
-        logs.append(f"{name} finished calculation")
-
     def killing_scenario_3(self):
 
         manager = multiprocessing.Manager()
@@ -1150,10 +1156,10 @@ class ProcessManager:
 
         workers = []
 
-        # ساخت 3 فرایند
+        
         for i in range(3):
             p = multiprocessing.Process(
-                target=self.worker,
+                target=self.secondWorker,
                 name=f"process_{i+1}",
                 args=(self.logs, i)
             )
