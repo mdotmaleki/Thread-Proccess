@@ -1642,7 +1642,6 @@ class ProcessManager:
 
         serializer = multiprocessing.Lock()
 
-
         p1 = BarrierWorker(
             self.logs,
             synchronizer,
@@ -1651,7 +1650,6 @@ class ProcessManager:
         )
 
         p1.name = "p1 - with_barrier"
-
 
         p2 = BarrierWorker(
             self.logs,
@@ -1662,8 +1660,6 @@ class ProcessManager:
 
         p2.name = "p2 - with_barrier"
 
-
-
         p3 = BarrierWorker(
             self.logs,
             synchronizer,
@@ -1672,26 +1668,18 @@ class ProcessManager:
         )
 
         p3.name = "p3 - without_barrier"
-
-
-
         p4 = BarrierWorker(
             self.logs,
             synchronizer,
             serializer,
             False
         )
-
         p4.name = "p4 - without_barrier"
-
-
 
         p1.start()
         p2.start()
         p3.start()
         p4.start()
-
-
 
         p1.join()
         p2.join()
