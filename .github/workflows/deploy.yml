@@ -7,7 +7,7 @@ on:
 
 
 env:
-  ENABLE_DEPLOY: false
+  ENABLE_DEPLOY: true
 
 
 jobs:
