@@ -50,7 +50,7 @@ def get_tools(method: str):
         return {
             "tools": [
                 "spawning", "naming", "background", "killing", 
-                "subclass", "queue","pipe","sybchrinization", "pool"
+                "subclass", "queue","pipe","synchrinization", "pool"
             ]
         }
 

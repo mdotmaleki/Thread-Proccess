@@ -1642,7 +1642,7 @@ class ProcessManager:
 
         return list(self.logs)
 
-    def barrier_scenario_1(self):
+    def synchrinization_scenario_1(self):
 
         manager = multiprocessing.Manager()
 
@@ -1703,7 +1703,7 @@ class ProcessManager:
 
         return list(self.logs)
 
-    def barrier_scenario_2(self):
+    def synchrinization_scenario_2(self):
 
         manager = multiprocessing.Manager()
         self.logs = manager.list()
@@ -1740,7 +1740,7 @@ class ProcessManager:
 
         return list(self.logs)
     
-    def barrier_scenario_3(self):
+    def synchrinization_scenario_3(self):
 
         manager = multiprocessing.Manager()
         self.logs = manager.list()
